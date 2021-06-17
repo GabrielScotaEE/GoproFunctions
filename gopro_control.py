@@ -117,7 +117,8 @@ class GP_functions:
 
                             # Inserting text in image frame with the decoded msg
                             font = cv2.FONT_HERSHEY_TRIPLEX
-                            cv2.putText(frame, self.barcode_info, (x + 6, y - 6), font, 2.0, (0, 0, 255), 1)
+                            cv2.rectangle(frame, (x, y),(x+395, y-50), (0, 255, 0), -1)
+                            cv2.putText(frame, self.barcode_info, (x + 6, y - 6), font, 2.0, (0, 0, 255), 2)
                             
                             #cv2.namedWindow('Barcode/QR code reader', 0)
                             # Resizing the window shape
