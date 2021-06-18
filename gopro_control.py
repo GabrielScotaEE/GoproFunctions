@@ -107,7 +107,7 @@ print('A funçao demora: {} segundos'.format(end-begin))
 #goproCamera.take_photo(timer=2)
 #gopro_functions.show_some_downloadeds_imgs()
 #gopro_functions.show_some_downloadeds_videos()
-
+#
 
 
 
