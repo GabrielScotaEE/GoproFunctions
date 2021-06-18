@@ -1,5 +1,5 @@
 # GoproFunctions
-------------------------------- Controling your go pro hero8 by wifi connection -------------------------------
+##  Controling your go pro hero8 by wifi connection
 
 1. - This thread will teach you how to connect your gopro in wifi desktop
 2. - First, you need to activate wifi in your camera, so click in preferences -> wireless connections -> turn on
