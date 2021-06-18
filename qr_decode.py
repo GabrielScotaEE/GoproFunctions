@@ -1,6 +1,6 @@
 import cv2
 from pyzbar.pyzbar import decode
-
+##
 
 class qr_decoder:
     def decode_once_and_show_frame(self,path):
