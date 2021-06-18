@@ -49,6 +49,7 @@ class qr_decoder:
 
                         # Creating .txt file with the msg of qrcode
                         with open("barcode_result.txt", mode ='w') as file:
+                            
                             file.write("Recognized Barcode:" + self.barcode_info)
                         flag = flag+ 1
                         if(cv2.waitKey(1000)):
