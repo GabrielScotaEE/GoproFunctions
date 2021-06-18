@@ -139,3 +139,4 @@ class qr_decoder:
         # free camera object and exit
         cap.release()
         cv2.destroyAllWindows()
+        #
