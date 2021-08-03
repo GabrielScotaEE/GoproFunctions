@@ -12,13 +12,13 @@
 # Live Stream on Windows Gopro Hero 8 black
 ## Just Follow the steps below:
 1. - You will need ffmpeg player, this link will help with the instalation: (https://pt.wikihow.com/Instalar-o-FFmpeg-no-Windows)
-2. - Run this code (**WARNING** - The keepAlive function use time.sleep() inside a loop, so your code will be lock in this function):
+2. - Run this code (**WARNING** - The keepAlive function use time.sleep( ) inside a loop, so your code will be lock in this function):
 	```
 	from goprocam import GoProCamera, constants
 	gpc = GoProCamera.GoPro()
 	gpc.KeepAlive()
 	```
-   - To get a better performance use (this code is in 'main.py'):
+   - *To get a better performance use (this code is in `main.py`)*:
 	```
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	last_message = time()
@@ -33,3 +33,6 @@
             last_message = current_time
             print('!!!!!!!!!!!!! WAKE UP !!!!!!!!!!!')
 	```
+3. - Type the folowing url into a browser:  `10.5.5.9/gp/gpControl/execute?p1=gpStream&c1=restart`
+4. - Now just use ffplayer (open cmd) to run your live: `ffplay -fflags nobuffer -f:v mpegts -probesize 8192 udp://@10.5.5.9:8554`
+
