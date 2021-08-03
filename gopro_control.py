@@ -17,7 +17,7 @@ import time
 class GP_functions:
     
 
-    def __init__(self,folder='./images/*.JPG'):
+    def __init__(self,folder='./images'):
         self.folder_location = folder
         pass
 
@@ -39,11 +39,12 @@ class GP_functions:
         # moving images to a specific folder /images
         for i in media:
             shutil.move('./100GOPRO-{}'.format(i), './images/{}'.format(i))
+        goproCamera.delete("all")
 
     def show_downloaded_imgs(self):
         cv2.namedWindow('sample image', 0)
         image_list =[]
-        list_files = os.listdir('.\images')
+        list_files = os.listdir(self.folder_location)
         for files in list_files:
             if files.find('.MP4')<0:
                 image_list.append(files) 
@@ -54,15 +55,15 @@ class GP_functions:
     
     def show_downloaded_videos(self):
         
-        videos_list = []
+        self.videos_list = []
         # Creating a list with all files in 
-        list_files = os.listdir('.\images')
+        list_files = os.listdir(self.folder_location)
         # Filtering only .mp4 files
         for video in list_files:
             if video.find('.MP4')>0:
-                videos_list.append(video)       
+                self.videos_list.append(video)       
 
-        for video_name in videos_list:
+        for video_name in self.videos_list:
             # Create a VideoCapture object and read from input file
             cap = cv2.VideoCapture('.\images\{}'.format(video_name))
 
@@ -88,6 +89,7 @@ class GP_functions:
                         break
                 else:
                     break
+            
     
         # When everything done, release
         # the video capture object
@@ -97,21 +99,27 @@ class GP_functions:
         cv2.destroyAllWindows()
 
 
-gopro_functions = GP_functions()
-decoder = qr_decoder
+
+
 #begin = time.time()
-#decoder.decode_and_show_all_videoFrames(decoder,'./images/GH010302.MP4')
 #end = time.time()
 #print('A funçao demora: {} segundos'.format(end-begin))
 
-#decoder.decode_once_and_show_frame(decoder,'GH010302.MP4')
-#goproCamera.video_settings(res="1080",fps="30")
+
+#gopro_functions = GP_functions()
 #goproCamera.shoot_video(duration=5)
 #gopro_functions.media_download_and_change_directory()
 #goproCamera.delete("all")
 #goproCamera.take_photo(timer=2)
 #gopro_functions.show_downloaded_imgs()
-gopro_functions.show_downloaded_videos() 
+#gopro_functions.show_downloaded_videos() 
+#gopro_functions.media_download_and_change_directory()
+#goproCamera.getStatus("Battery",value="1")
+
+decoder = qr_decoder
+#decoder.decode_and_show_all_videoFrames(decoder,'./images/GH010302.MP4')
+decoder.decode_once_and_show_frame(decoder,'./images/GH010302.MP4')
+
 
 
 

@@ -1,5 +1,9 @@
 import cv2
 from pyzbar.pyzbar import decode
+import numpy as np
+import pyautogui
+from time import time
+from PIL import ImageGrab
 ##
 
 class qr_decoder:
@@ -18,7 +22,7 @@ class qr_decoder:
             sucess, frame = cap.read()
             
             if sucess == True:
-                # Trying to decode any qrcode in frame
+                # Trying to decode qrcode in frame
                 msg = decode(frame)
                     
                 if flag >=1:
@@ -38,13 +42,14 @@ class qr_decoder:
                         cv2.rectangle(frame, (x, y),(x+395, y-50), (0, 255, 0), -1)
                         cv2.putText(frame, self.barcode_info, (x + 6, y - 6), font, 2.0, (0, 0, 255), 2)
                             
-                        #cv2.namedWindow('Barcode/QR code reader', 0)
+                        
                         # Resizing the window shape
                         (width, height) = (int(frame.shape[1]*0.6), int(frame.shape[0]*0.6))
                         dimensions = (width,height)
                         frame_resized = cv2.resize(frame, dimensions, interpolation=cv2.INTER_AREA)
 
                         #Showing the frame with the msg and the bounding box
+                        cv2.namedWindow('Barcode/QR code reader', 0)
                         cv2.imshow('Barcode/QR code reader', frame_resized)
 
                         # Creating .txt file with the msg of qrcode
@@ -52,7 +57,7 @@ class qr_decoder:
                             
                             file.write("Recognized Barcode:" + self.barcode_info)
                         flag = flag+ 1
-                        if(cv2.waitKey(1000)):
+                        if(cv2.waitKey(0)):
                             break 
            
                 if(cv2.waitKey(1) == ord("q")):
@@ -65,7 +70,6 @@ class qr_decoder:
         # free camera object and exit
         cap.release()
         cv2.destroyAllWindows()
-
 
     def decode_images(self,path_image):
         # reading img
@@ -81,28 +85,30 @@ class qr_decoder:
             print(code.type)
 
     def decode_and_show_all_videoFrames(self,path):
+
+
         # set up camera object
         cap = cv2.VideoCapture(path)
   
         # Geting the total number of frames in video file
         totalFrames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-            
+        count = 0
         for i in range(int(totalFrames)):
             # get the frame image
             sucess, frame = cap.read()
-            # Resizing frame shape by 0.6
-            
-                      
             
             if sucess == True:
                 
                 #Resizing frame by 0.6
-                (width, height) = (int(frame.shape[1]*0.6), int(frame.shape[0]*0.6))
-                
+                if frame.shape[0] > 1500:
+                    (width, height) = (int(frame.shape[1]*0.45), int(frame.shape[0]*0.45))
+                else:
+                    (width, height) = (int(frame.shape[1]*0.6), int(frame.shape[0]*0.6))
+                #(width, height) = (1280, 760) #(1366, 768) (1920, 1080) (3840, 2160)
                 dimensions = (width,height)
                 frame_resized = cv2.resize(frame, dimensions, interpolation=cv2.INTER_AREA)
                 # Trying to decode any qrcode in frame
-                msg = decode(frame_resized)
+                msg = decode(frame)
 
                 cv2.imshow('Barcode/QR code reader',frame_resized)
                 #cv2.waitKey(1)    
@@ -112,32 +118,46 @@ class qr_decoder:
 
                         # Coordinates of bounding box in qrcode
                         x, y, w, h = code.rect
-                        cv2.rectangle(frame_resized, (x, y),(x+w, y+h), (0, 255, 0), 2)
+                        cv2.rectangle(frame, (x, y),(x+w, y+h), (0, 255, 0), 2)
                         # Decoding de msg of qr code
                         self.barcode_info = code.data.decode('utf-8')
 
                         # Inserting text in image frame with the decoded msg
                         font = cv2.FONT_HERSHEY_TRIPLEX
-                        cv2.rectangle(frame_resized, (x, y),(x+395, y-50), (100, 255, 0), -1)
+                        cv2.rectangle(frame, (x, y),(x+395, y-50), (100, 255, 0), -1)
 
                         (x_text,y_text) = (x+6,y-6)
 
                         if y_text < 0:
                             y_text = y+h+56
                         
-                        cv2.putText(frame_resized, self.barcode_info, (x + 6, y_text), font, 2.0, (0, 0, 255), 2)
-                      
+                        cv2.putText(frame, self.barcode_info, (x + 6, y_text), font, 2.0, (0, 0, 255), 2)
+                        # Count how many decoded frames
+                        count = count + 1
+                        if frame.shape[0] > 1500:
+                            (width, height) = (int(frame.shape[1]*0.45), int(frame.shape[0]*0.45))
+                        else:
+                            (width, height) = (int(frame.shape[1]*0.6), int(frame.shape[0]*0.6))
+                        #(width, height) = (1280, 760) #(1366, 768) (1920, 1080) (3840, 2160)
+                        dimensions = (width,height)
+                        frame_resized = cv2.resize(frame, dimensions, interpolation=cv2.INTER_AREA)
                         #Showing the frame with the msg and the bounding box
                         cv2.imshow('Barcode/QR code reader', frame_resized)
-                        #cv2.waitKey(1)
+                        
                 
                     
 
-   
-                if(cv2.waitKey(1) == ord("q")):
-                    break
-      
+                
+                # if(cv2.waitKey(1) == ord("q")):
+                #     break
+        print(count)
         # free camera object and exit
         cap.release()
         cv2.destroyAllWindows()
-        #
+    
+    
+
+
+decoder = qr_decoder()
+
+decoder.decodeIn_RealTime()
