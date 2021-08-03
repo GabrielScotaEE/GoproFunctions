@@ -1,6 +1,7 @@
 import cv2 as cv
 from pyzbar.pyzbar import decode
 import numpy as np
+
 from time import time
 from windowcapture import *
 from re import T
@@ -21,13 +22,15 @@ while(True):
     hwnd = win32gui.FindWindow(None, 'udp://@10.5.5.9:8554')
     if not hwnd:
         print('Window not found: {}'.format('udp://@10.5.5.9:8554'))
+        current_time = time()
+        if current_time - last_message >= 2500/1000:
+            sock.sendto(keep_alive_payload, ("10.5.5.9", 8554))
+            last_message = current_time
+            print('!!!!!!!!!!!!! WAKE UP !!!!!!!!!!!')
+        
     else: break
     # keep gopro alive
-    current_time = time()
-    if current_time - last_message >= 2500/1000:
-                sock.sendto(keep_alive_payload, ("10.5.5.9", 8554))
-                last_message = current_time
-                print('!!!!!!!!!!!!! WAKE UP !!!!!!!!!!')
+    
 
 wincap = WindowCapture('udp://@10.5.5.9:8554')
 dcd = Decode()
