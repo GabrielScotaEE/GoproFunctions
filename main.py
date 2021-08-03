@@ -16,7 +16,8 @@ last_message = time()
 keep_alive_payload = "_GPHD_:1:0:2:0.000000\n".encode()
 sock.sendto(keep_alive_payload, ("10.5.5.9", 8554))
 
-
+# ffplay -fflags nobuffer -f:v mpegts -probesize 8192 udp://@10.5.5.9:8554
+# 10.5.5.9/gp/gpControl/execute?p1=gpStream&c1=restart
 
 while(True):
     hwnd = win32gui.FindWindow(None, 'udp://@10.5.5.9:8554')

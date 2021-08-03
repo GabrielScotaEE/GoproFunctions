@@ -52,8 +52,8 @@ class WindowCapture:
     # pos (x,y)
     # WARNING: if you move the window being captured adter execution is started, this will
     # return incorrect coordinates, because the window position is only calculated in __init__
-    def get_screen_position(self,pos):
-        return (pos[0] + self.offset_x, pos[1] + self.offset_y)
+    # def get_screen_position(self,pos):
+    #     return (pos[0] + self.offset_x, pos[1] + self.offset_y)
 
     @staticmethod
     def get_window_names():
