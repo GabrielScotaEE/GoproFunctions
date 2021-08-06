@@ -29,5 +29,6 @@ class Decode():
                 font = cv.FONT_HERSHEY_TRIPLEX
                 cv.rectangle(img, (x, y),(x+395, y-50), (0, 255, 0), -1)
                 cv.putText(img, self.barcode_info, (x + 6, y - 6), font, 2.0, (0, 0, 255), 2)
+                
         return img, self.barcode_info
         

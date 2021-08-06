@@ -30,20 +30,21 @@ class WindowCapture:
 
         # get window size
         window_rect = win32gui.GetWindowRect(self.hwnd)
+        
         self.w = window_rect[2] - window_rect[0]
         self.h = window_rect[3] - window_rect[1]
 
         # remove window border and title bar
         border_pixels = 8
         titlebar_pixels = 30
-        # self.w = self.w - (border_pixels*2)
+        self.w = self.w  - (border_pixels*2)
         self.h = self.h - titlebar_pixels - border_pixels
        
         self.cropped_x = border_pixels
         self.cropped_y = titlebar_pixels
 
         self.offset_x = window_rect[0] + self.cropped_x
-        self.cropped_y = window_rect[1] + self.cropped_y
+        self.offset_y = window_rect[1] + self.cropped_y
 
 
         pass
@@ -71,11 +72,13 @@ class WindowCapture:
         dataBitMap = win32ui.CreateBitmap()
         dataBitMap.CreateCompatibleBitmap(dcObj, self.w, self.h)
         cDC.SelectObject(dataBitMap)
-        cDC.BitBlt((0,0),(self.w, self.h) , dcObj, (0,0), win32con.SRCCOPY)
+        cDC.BitBlt((0,0),(self.w, self.h) , dcObj, (self.cropped_x,self.cropped_y), win32con.SRCCOPY)
 
         signedIntsArray = dataBitMap.GetBitmapBits(True)
         img = np.fromstring(signedIntsArray, dtype='uint8')
         img.shape = (self.h,self.w,4)
+
+        #img = img[35:self.h-8,10:self.w-10]
 
         # Free Resources
         dcObj.DeleteDC()

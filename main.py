@@ -37,6 +37,7 @@ wincap = WindowCapture('udp://@10.5.5.9:8554')
 dcd = Decode()
 
 while(True):
+    
     # keep gopro alive
     current_time = time()
     if current_time - last_message >= 2500/1000:
@@ -49,14 +50,15 @@ while(True):
 
     decode_img, msg = dcd.decode(opencv_screenshot)
     if msg is not None:
-        cv.imshow('Qr decodificado', decode_img)
-        print('A mensagem do qr code é: {}'.format(msg))
-        cv.destroyWindow('Gopro Real Time')
-        cv.waitKey(0)
+        cv.imshow('Gopro Real Time', decode_img)
+        #print('A mensagem do qr code é: {}'.format(msg))
         break
+        
+    else:
+        cv.imshow('Gopro Real Time', opencv_screenshot)
+        
 
 
-    cv.imshow('Gopro Real Time', opencv_screenshot)
     print('FPS {}'.format(np.round(1/(time()-loop_time))))
 
     loop_time = time()
