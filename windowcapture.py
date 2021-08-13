@@ -2,9 +2,10 @@ import cv2 as cv
 from pyzbar.pyzbar import decode
 import numpy as np
 import pyautogui
+import socket
 from time import time
 import pywintypes
-import win32gui, win32ui, win32con
+import win32gui, win32ui, win32con, win32api
 from PIL import ImageGrab
 
 class WindowCapture:
@@ -18,7 +19,11 @@ class WindowCapture:
     offset_y = 0
 
     def __init__(self, window_name=None) :
-        
+
+        self.SM_XVIRTUALSCREEN = 76
+        self.SM_YVIRTUALSCREEN = 77
+        self.SM_CXVIRTUALSCREEN = 78
+        self.SM_CYVIRTUALSCREEN = 79
         
         if window_name is None:
             self.hwnd = win32gui.GetDesktopWindow()
@@ -43,18 +48,9 @@ class WindowCapture:
         self.cropped_x = border_pixels
         self.cropped_y = titlebar_pixels
 
-        self.offset_x = window_rect[0] + self.cropped_x
-        self.offset_y = window_rect[1] + self.cropped_y
-
-
+   
         pass
     
-    # translate a pixel position on a screenshot image to a pixel position on the screen
-    # pos (x,y)
-    # WARNING: if you move the window being captured adter execution is started, this will
-    # return incorrect coordinates, because the window position is only calculated in __init__
-    # def get_screen_position(self,pos):
-    #     return (pos[0] + self.offset_x, pos[1] + self.offset_y)
 
     @staticmethod
     def get_window_names():
@@ -85,5 +81,55 @@ class WindowCapture:
         cDC.DeleteDC()
         win32gui.ReleaseDC(self.hwnd, wDC)
         win32gui.DeleteObject(dataBitMap.GetHandle())
+        return img
+    
+    def Gopro_Hero_8_keepAlive(self):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        last_message = time()
+        keep_alive_payload = "_GPHD_:1:0:2:0.000000\n".encode()
+        sock.sendto(keep_alive_payload, ("10.5.5.9", 8554))
+
+        # keep gopro alive
+        current_time = time()
+        if current_time - last_message >= 2500/1000:
+            sock.sendto(keep_alive_payload, ("10.5.5.9", 8554))
+            last_message = current_time
+            print('!!!!!!!!!!!!! WAKE UP !!!!!!!!!')
+
+    def get_sec_screen(self,width_first_screen,height_first_screen,widthSecondScreen,heightSecondScreen):
+
+        # width = largura
+        w = win32api.GetSystemMetrics(self.SM_CXVIRTUALSCREEN)
+        h = win32api.GetSystemMetrics(self.SM_CYVIRTUALSCREEN)
+        l = win32api.GetSystemMetrics(self.SM_XVIRTUALSCREEN)
+        t = win32api.GetSystemMetrics(self.SM_YVIRTUALSCREEN)
+        
+        hwndDC = win32gui.GetWindowDC(self.hwnd)
+        mfcDC  = win32ui.CreateDCFromHandle(hwndDC)
+        saveDC = mfcDC.CreateCompatibleDC()
+        
+        saveBitMap = win32ui.CreateBitmap()
+        saveBitMap.CreateCompatibleBitmap(mfcDC, w, h)
+        saveDC.SelectObject(saveBitMap)
+        saveDC.BitBlt((0, 0), (w, h),  mfcDC,  (width_first_screen, t),  win32con.SRCCOPY)
+
+        signedIntsArray = saveBitMap.GetBitmapBits(True)
+        img = np.frombuffer(signedIntsArray, dtype='uint8')
+        img.shape = (h,w,4)
+
+        offset_Y = np.absolute(height_first_screen - heightSecondScreen)
+
+        # for full screen
+        self.desktop2 = win32gui.GetDesktopWindow()
+        # x1 -> width 1st screen // y1 -> height first monitor
+        x0,y0,x1,y1 = win32gui.GetWindowRect(self.hwnd)
+        
+        if (height_first_screen > heightSecondScreen) and (width_first_screen > widthSecondScreen):
+            img = img[y0:y1-offset_Y,0:w-x1]
+        elif (heightSecondScreen > height_first_screen) and (widthSecondScreen > width_first_screen):
+             img = img[y0:y1+offset_Y,0:w-x1]
+        
+
         return img
 

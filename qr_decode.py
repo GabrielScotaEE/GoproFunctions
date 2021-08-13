@@ -160,4 +160,4 @@ class qr_decoder:
 
 decoder = qr_decoder()
 
-decoder.decodeIn_RealTime()
+decoder.decode_and_show_all_videoFrames('./images/GH010302.MP4')
