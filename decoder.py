@@ -1,9 +1,8 @@
 import cv2 as cv
 from pyzbar.pyzbar import decode
 import numpy as np
-import pyautogui
 from time import time
-from PIL import ImageGrab
+
 
 class Decode():
 
@@ -13,7 +12,7 @@ class Decode():
 
         pass
 
-    def decode(self,img):
+    def decode_pyzbar(self,img):
         msg = decode(img)
         if(msg is not None):
                         
@@ -47,7 +46,11 @@ class Decode():
             y_min = 100000
             y_max = 0
             for i in range (4):
-                find_x0, find_x1, find_y0, find_y1 = int(points[0][i][0]), int(points[0][i][0]), int(points[0][i][1]), int(points[0][i][1])
+                find_x0, find_x1, find_y0, find_y1 = int(points[0][i][0]), 
+                int(points[0][i][0]), 
+                int(points[0][i][1]), 
+                int(points[0][i][1])
+
                 if find_x0 < x_min:
                     x_min = find_x0
                 if find_x1 > x_max:
@@ -63,35 +66,3 @@ class Decode():
 
         return img, retval, straight_qrcode    
 
-# det = cv.QRCodeDetector()
-# img = cv.imread('./images/deu_bom.png')
-# retval, points, straight_qrcode = det.detectAndDecode(img)
-# print (points)
-# x_min = 100000
-# x_max = 0
-# y_min = 100000
-# y_max = 0
-# for i in range (4):
-#     find_x0, find_x1, find_y0, find_y1 = int(points[0][i][0]), int(points[0][i][0]), int(points[0][i][1]), int(points[0][i][1])
-#     if find_x0 < x_min:
-#         x_min = find_x0
-#     if find_x1 > x_max:
-#         x_max = find_x1
-#     if find_y0 < y_min:
-#         y_min = find_y0
-#     if find_y1 > y_max:
-#         y_max = find_y1
-# x = int(points[0][0][0])
-# y = int(points[0][0][1])
-# x1 = int(points[0][1][0])
-# y1 = int(points[0][2][1])
-# print(x,y,x1,y1)
-
-# if retval is not None:
-#     cv.namedWindow('img',0)
-#     cv.rectangle(img, (x, y),(x1, y1), (0, 255, 0), 2)
-#     cv.rectangle(img, (x, y),(x+180, y-40), (0, 255, 0), -1)
-#     cv.putText(img, retval, (x + 6, y - 9), cv.FONT_HERSHEY_TRIPLEX, 1.0, (0, 0, 255), 1)
-#     cv.imshow('img',img)
-#     print(retval)
-#     cv.waitKey(0)
