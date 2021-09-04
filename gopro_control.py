@@ -7,23 +7,22 @@ import os
 from skimage.io import imread_collection
 import numpy as np
 from pyzbar.pyzbar import decode
-from qr_decode import qr_decoder
+from qr_decode import QRdecoder
 import time
+import socket
 
 
-# Creating obj gopro
-#goproCamera = GoProCamera.GoPro()
-
-class GP_functions:
+class GoproClass():
     
 
     def __init__(self,folder='./images'):
         self.folder_location = folder
+        #self.goproCamera = GoProCamera.GoPro()
         pass
 
     def url_image_show(self):
         # get photo location
-        location = goproCamera.getMedia()
+        location = self.goproCamera.getMedia()
         urllib.request.urlretrieve(location, "GOPR0293.JPG")
         img = Image.open("GOPR0293.JPG")
         img.show()
@@ -33,7 +32,7 @@ class GP_functions:
         goproCamera.downloadLastMedia
         goproCamera.delete("last")
 
-    def media_download_and_change_directory(self):
+    def downloadAndChangeDirectory(self):
         # downloadAll returns a list of all images, videos... in the camera
         media = goproCamera.downloadAll()
         # moving images to a specific folder /images
@@ -53,50 +52,31 @@ class GP_functions:
             cv2.imshow('sample image',img)
             cv2.waitKey(0)
     
-    def show_downloaded_videos(self):
+    def show_downloadedVideoFiles(self):
         
         self.videos_list = []
         # Creating a list with all files in 
         list_files = os.listdir(self.folder_location)
         # Filtering only .mp4 files
         for video in list_files:
+            print(video)
             if video.find('.MP4')>0:
                 self.videos_list.append(video)       
+        return self.videos_list
 
-        for video_name in self.videos_list:
-            # Create a VideoCapture object and read from input file
-            cap = cv2.VideoCapture('.\images\{}'.format(video_name))
+    def GoproHero8_keepAlive(self):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-                # Check if camera opened successfully
-            if (cap.isOpened()== False):
-                print("Error opening video file")
+        last_message = time.time()
+        keep_alive_payload = "_GPHD_:1:0:2:0.000000\n".encode()
+        sock.sendto(keep_alive_payload, ("10.5.5.9", 8554))
 
-                # Read until video is completed
-            while(cap.isOpened()):
-                        
-                # Capture frame-by-frame
-                ret, frame = cap.read()
-                
-                if ret == True:
-                    (width, height) = (int(frame.shape[1]*0.6), int(frame.shape[0]*0.6))
-                    dimensions = (width,height)
-                    frame_resized = cv2.resize(frame, dimensions, interpolation=cv2.INTER_AREA)
-                # Display the resulting frame
-                    cv2.imshow('Frame', frame_resized)
-
-                # Press Q on keyboard to exit
-                    if cv2.waitKey(25) & 0xFF == ord('q'):
-                        break
-                else:
-                    break
-            
-    
-        # When everything done, release
-        # the video capture object
-        cap.release()
-
-        # Closes all the frames
-        cv2.destroyAllWindows()
+        # keep gopro alive
+        current_time = time.time()
+        if current_time - last_message >= 2500/1000:
+            sock.sendto(keep_alive_payload, ("10.5.5.9", 8554))
+            last_message = current_time
+            print('!!!!!!!!!!!!! WAKE UP !!!!!!!!!!!!!')
 
 
 
@@ -106,19 +86,19 @@ class GP_functions:
 #print('A funçao demora: {} segundos'.format(end-begin))
 
 
-#gopro_functions = GP_functions()
+# goproFunct = GoproClass()
 #goproCamera.shoot_video(duration=5)
-#gopro_functions.media_download_and_change_directory()
+#goproFunct.media_download_and_change_directory()
 #goproCamera.delete("all")
 #goproCamera.take_photo(timer=2)
-#gopro_functions.show_downloaded_imgs()
-#gopro_functions.show_downloaded_videos() 
-#gopro_functions.media_download_and_change_directory()
+#goproFunct.show_downloaded_imgs()
+
+#goproFunct.media_download_and_change_directory()
 #goproCamera.getStatus("Battery",value="1")
 
-decoder = qr_decoder
+#decoder = qr_decoder
 #decoder.decode_and_show_all_videoFrames(decoder,'./images/GH010302.MP4')
-decoder.decode_once_and_show_frame(decoder,'./images/GH010302.MP4')
+#decoder.decode_once_and_show_frame(decoder,'./images/GH010302.MP4')
 
 
 

@@ -8,7 +8,7 @@ import pywintypes
 import win32gui, win32ui, win32con, win32api
 from PIL import ImageGrab
 
-class WindowCapture:
+class WindowCapture():
 
     w = 0
     h = 0
@@ -82,20 +82,6 @@ class WindowCapture:
         win32gui.ReleaseDC(self.hwnd, wDC)
         win32gui.DeleteObject(dataBitMap.GetHandle())
         return img
-    
-    def Gopro_Hero_8_keepAlive(self):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-        last_message = time()
-        keep_alive_payload = "_GPHD_:1:0:2:0.000000\n".encode()
-        sock.sendto(keep_alive_payload, ("10.5.5.9", 8554))
-
-        # keep gopro alive
-        current_time = time()
-        if current_time - last_message >= 2500/1000:
-            sock.sendto(keep_alive_payload, ("10.5.5.9", 8554))
-            last_message = current_time
-            print('!!!!!!!!!!!!! WAKE UP !!!!!!!!!')
 
     def get_sec_screen(self,width_first_screen,height_first_screen,widthSecondScreen,heightSecondScreen):
 
@@ -120,8 +106,7 @@ class WindowCapture:
 
         offset_Y = np.absolute(height_first_screen - heightSecondScreen)
 
-        # for full screen
-        self.desktop2 = win32gui.GetDesktopWindow()
+       
         # x1 -> width 1st screen // y1 -> height first monitor
         x0,y0,x1,y1 = win32gui.GetWindowRect(self.hwnd)
         
@@ -132,4 +117,3 @@ class WindowCapture:
         
 
         return img
-

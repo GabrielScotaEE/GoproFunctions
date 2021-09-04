@@ -1,3 +1,4 @@
+  
 import cv2 as cv
 from pyzbar.pyzbar import decode
 import numpy as np
@@ -7,7 +8,7 @@ from re import T
 from pyzbar.pyzbar import decode
 import socket
 from decoder import Decode
-
+from gopro_control import GoproClass
 
 
 # ffplay -fflags nobuffer -f:v mpegts -probesize 8192 udp://@10.5.5.9:8554
@@ -23,11 +24,14 @@ wincap = WindowCapture('udp://@10.5.5.9:8554')
 # Creating Decode obj.
 dcd = Decode()
 
+# creating goproclass obj
+goprofunctions = GoproClass()
+
 # Loop through every screenshot creating a video from then
 
 while(True):
     # Call function to keep gopro alive
-    wincap.Gopro_Hero_8_keepAlive()
+    goprofunctions.GoproHero8_keepAlive()
     # Getting the frame of the window with GoPro live.
 
     #screenshot = wincap.get_sec_screen(1600,900,1368,768)
@@ -54,4 +58,3 @@ while(True):
     if cv.waitKey(1) == ord('q'):
         cv.destroyAllWindows()
         break
-
