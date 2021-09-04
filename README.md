@@ -12,8 +12,9 @@
 # Live Stream on Windows Gopro Hero 8 black
 ## Just Follow the steps below:
 1. - You will need ffmpeg player, this link will help with the instalation: (https://pt.wikihow.com/Instalar-o-FFmpeg-no-Windows)
-2. - Type the folowing url into a browser (after connect gopro by wifi):  `10.5.5.9/gp/gpControl/execute?p1=gpStream&c1=restart`
-3. - Run this code (this is onGoproHero8_keepAlive function, inside `gopro_control.py`):
+2. - Now to run your live just use ffplayer. Open cmd and paste this: `ffplay -fflags nobuffer -f:v mpegts -probesize 8192 udp://@10.5.5.9:8554`
+3. - Type the folowing url into a browser (after connect gopro by wifi):  `10.5.5.9/gp/gpControl/execute?p1=gpStream&c1=restart`
+4. - Live is runing but you need to keep it alive. Therefore run this code (this is onGoproHero8_keepAlive function, inside `gopro_control.py`):
 	```
 	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	last_message = time()
@@ -28,5 +29,4 @@
    	  goproFunc.GoproHero8_keepAlive()
 	```
 
-4. - Now just use ffplayer (open cmd) to run your live: `ffplay -fflags nobuffer -f:v mpegts -probesize 8192 udp://@10.5.5.9:8554`
 
