@@ -1,17 +1,14 @@
 from goprocam import GoProCamera, constants
 import cv2
 import urllib.request
-from PIL import Image
 import shutil
 import os
-from skimage.io import imread_collection
 import numpy as np
 from pyzbar.pyzbar import decode
-from qr_decode import QRdecoder
 import time
 import socket
 
-
+#goproCamera = GoProCamera()
 class GoproClass():
     
 
