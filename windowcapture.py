@@ -6,7 +6,7 @@ import socket
 from time import time
 import pywintypes
 import win32gui, win32ui, win32con, win32api
-from PIL import ImageGrab
+
 
 class WindowCapture():
 
